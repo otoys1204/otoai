@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTO AI</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap">
+    <link rel="icon" type="image/png" href="logo_oto.png">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --bg: #f9fafb;
+            --card: #ffffff;
+            --text: #111827;
+            --text-light: #6b7280;
+            --border: #e5e7eb;
+            --shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            margin-bottom: 1.5rem;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .subtitle {
+            color: var(--text-light);
+            font-weight: 400;
+        }
+
+        .chat-container {
+            background-color: var(--card);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            height: calc(100% - 120px);
+        }
+
+        .chat-history {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            min-height: 0;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            line-height: 1.6;
+            flex-shrink: 0;
+        }
+
+        .user-message {
+            align-self: flex-end;
+            background-color: var(--primary);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .ai-message {
+            align-self: flex-start;
+            background-color: var(--bg);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-bottom-left-radius: 4px;
+        }
+
+        .input-area {
+            padding: 1rem;
+            border-top: 1px solid var(--border);
+            background-color: var(--card);
+            display: flex;
+            gap: 0.5rem;
+            flex-shrink: 0;
+        }
+
+        textarea {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            resize: none;
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: border 0.2s;
+            min-height: 50px;
+            max-height: 150px;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0 1.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .memory-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .memory-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .save-btn {
+            background-color: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            padding: 0.5rem 1rem;
+        }
+
+        .save-btn:hover {
+            background-color: rgba(99, 102, 241, 0.1);
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 20px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+
+        .timestamp {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            margin-top: 0.25rem;
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 1rem;
+                height: auto;
+                min-height: 100vh;
+            }
+            
+            .message {
+                max-width: 90%;
+            }
+            
+            .chat-container {
+                height: auto;
+                min-height: 60vh;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>OTO AI</h1>
+            <p class="subtitle">Conversations with memory</p>
+        </header>
+
+        <div class="chat-container">
+            <div class="chat-history" id="chatHistory">
+                <!-- Messages will appear here -->
+                <div class="message ai-message">
+                    <div>Hello! I'm OTO AI. How can I help you today?</div>
+                    <div class="timestamp">Just now</div>
+                </div>
+            </div>
+
+            <div class="input-area">
+                <textarea id="prompt" placeholder="Type your message..." rows="1"></textarea>
+                <button onclick="sendPrompt()">Send</button>
+            </div>
+        </div>
+
+        <div class="memory-controls">
+            <div class="memory-toggle">
+                <label class="switch">
+                    <input type="checkbox" id="memoryToggle" checked>
+                    <span class="slider"></span>
+                </label>
+                <span>Memory</span>
+            </div>
+            <button class="save-btn" onclick="saveConversation()">Save Conversation</button>
+        </div>
+    </div>
+
+    <script>
+        // Conversation memory
+        let conversationHistory = [
+            { role: "ai", content: "Hello! I'm OTO AI. How can I help you today?", timestamp: new Date() }
+        ];
+
+        // Add message to chat history
+        function addMessage(role, content) {
+            const chatHistory = document.getElementById("chatHistory");
+            const messageDiv = document.createElement("div");
+            messageDiv.className = `message ${role}-message`;
+            
+            const timestamp = new Date();
+            const timeString = timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            messageDiv.innerHTML = `
+                <div>${content}</div>
+                <div class="timestamp">${timeString}</div>
+            `;
+            
+            chatHistory.appendChild(messageDiv);
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+            
+            // Add to conversation history if memory is enabled
+            if (document.getElementById("memoryToggle").checked) {
+                conversationHistory.push({ role, content, timestamp });
+            }
+        }
+
+        // Send prompt to AI
+        async function sendPrompt() {
+            const promptInput = document.getElementById("prompt");
+            const prompt = promptInput.value.trim();
+            
+            if (!prompt) return;
+            
+            // Add user message
+            addMessage("user", prompt);
+            promptInput.value = "";
+            
+            try {
+                // Prepare request data
+                const requestData = {
+                    prompt: prompt,
+                    memory: document.getElementById("memoryToggle").checked ? 
+                           conversationHistory : null
+                };
+                
+                // Show loading state
+                const loadingMsg = addMessage("ai", "Thinking...");
+                
+                // Send to server
+                const res = await fetch("/generate-text", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(requestData)
+                });
+                
+                const data = await res.json();
+                
+                // Replace loading message with actual response
+                const chatHistory = document.getElementById("chatHistory");
+                chatHistory.removeChild(chatHistory.lastChild);
+                
+                addMessage("ai", data.output || data.error || "Sorry, I couldn't process that.");
+            } catch (error) {
+                addMessage("ai", "Sorry, there was an error processing your request.");
+                console.error("Error:", error);
+            }
+        }
+
+        // Save conversation to localStorage
+        function saveConversation() {
+            const savedConversations = JSON.parse(localStorage.getItem("savedConversations")) || [];
+            savedConversations.push({
+                date: new Date(),
+                messages: conversationHistory
+            });
+            
+            localStorage.setItem("savedConversations", JSON.stringify(savedConversations));
+            
+            // Show confirmation (you could replace this with a nicer toast notification)
+            alert("Conversation saved to memory!");
+        }
+
+        // Allow pressing Enter to send (but Shift+Enter for new line)
+        document.getElementById("prompt").addEventListener("keydown", function(e) {
+            if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                sendPrompt();
+            }
+            
+            // Auto-resize textarea as user types
+            this.style.height = "auto";
+            this.style.height = (this.scrollHeight) + "px";
+        });
+    </script>
+</body>
+</html>
