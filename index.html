@@ -16,6 +16,10 @@
             --text-light: #6b7280;
             --border: #e5e7eb;
             --shadow: 0 1px 3px rgba(0,0,0,0.1);
+            --user-bg: #6366f1;
+            --ai-bg: #f3f4f6;
+            --history-bg: #f8fafc;
+            --delete-hover: #ef4444;
         }
 
         * {
@@ -29,19 +33,134 @@
             background-color: var(--bg);
             color: var(--text);
             line-height: 1.5;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
         }
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 2rem;
-            width: 100%;
+        .app-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 1.5rem;
             height: 100vh;
+            padding: 1rem;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem;
+            box-shadow: var(--shadow);
             display: flex;
             flex-direction: column;
+            height: 100%;
+        }
+
+        .sidebar h2 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--primary);
+        }
+
+        .menu button {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+            text-align: center;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .menu button:hover {
+            background: var(--primary-dark);
+        }
+
+        .history-list h3 {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .history-item {
+            background: var(--history-bg);
+            border: 1px solid var(--border);
+            padding: 0.65rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+            width: 100%;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .history-item:hover {
+            border-color: var(--primary);
+            background: white;
+        }
+
+        .delete-btn {
+            background: none;
+            color: #9ca3af;
+            font-size: 0.9rem;
+            opacity: 0;
+            border: none;
+            cursor: pointer;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            transition: 0.2s;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .history-item:hover .delete-btn {
+            opacity: 1;
+        }
+
+        .delete-btn:hover {
+            background: #fee2e2;
+            color: var(--delete-hover);
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .sidebar-footer small {
+            color: var(--text-light);
+            font-size: 0.8rem;
+        }
+
+        /* CHAT SECTION */
+        .chat-section {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
         }
 
         header {
@@ -71,7 +190,6 @@
             flex-direction: column;
             overflow: hidden;
             border: 1px solid var(--border);
-            height: calc(100% - 120px);
         }
 
         .chat-history {
@@ -80,31 +198,44 @@
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 1.5rem;
+            gap: 1rem;
             min-height: 0;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
         }
 
         .message {
             max-width: 80%;
-            padding: 0.75rem 1rem;
-            border-radius: 12px;
+            padding: 0.9rem 1.1rem;
+            border-radius: 18px;
             line-height: 1.6;
             flex-shrink: 0;
+            word-wrap: break-word;
+            font-size: 0.95rem;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
 
         .user-message {
             align-self: flex-end;
-            background-color: var(--primary);
+            background-color: var(--user-bg);
             color: white;
-            border-bottom-right-radius: 4px;
+            border-bottom-right-radius: 6px;
         }
 
         .ai-message {
             align-self: flex-start;
-            background-color: var(--bg);
+            background-color: var(--ai-bg);
             color: var(--text);
             border: 1px solid var(--border);
-            border-bottom-left-radius: 4px;
+            border-bottom-left-radius: 6px;
+        }
+
+        .timestamp {
+            font-size: 0.7rem;
+            color: var(--text-light);
+            margin-top: 0.3rem;
+            opacity: 0.8;
         }
 
         .input-area {
@@ -127,6 +258,7 @@
             transition: border 0.2s;
             min-height: 50px;
             max-height: 150px;
+            background: white;
         }
 
         textarea:focus {
@@ -149,231 +281,274 @@
         button:hover {
             background-color: var(--primary-dark);
         }
-
-        .memory-controls {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 1rem;
-            font-size: 0.9rem;
-            flex-shrink: 0;
-        }
-
-        .memory-toggle {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .save-btn {
-            background-color: transparent;
-            color: var(--primary);
-            border: 1px solid var(--primary);
-            padding: 0.5rem 1rem;
-        }
-
-        .save-btn:hover {
-            background-color: rgba(99, 102, 241, 0.1);
-        }
-
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 40px;
-            height: 20px;
-        }
-
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-            border-radius: 20px;
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 16px;
-            width: 16px;
-            left: 2px;
-            bottom: 2px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-
-        input:checked + .slider {
-            background-color: var(--primary);
-        }
-
-        input:checked + .slider:before {
-            transform: translateX(20px);
-        }
-
-        .timestamp {
-            font-size: 0.75rem;
-            color: var(--text-light);
-            margin-top: 0.25rem;
-        }
-
-        @media (max-width: 640px) {
-            .container {
-                padding: 1rem;
-                height: auto;
-                min-height: 100vh;
-            }
-            
-            .message {
-                max-width: 90%;
-            }
-            
-            .chat-container {
-                height: auto;
-                min-height: 60vh;
-            }
-        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>OTO AI</h1>
-            <p class="subtitle">Conversations with memory</p>
-        </header>
-
-        <div class="chat-container">
-            <div class="chat-history" id="chatHistory">
-                <!-- Messages will appear here -->
-                <div class="message ai-message">
-                    <div>Hello! I'm OTO AI. How can I help you today?</div>
-                    <div class="timestamp">Just now</div>
+    <div class="app-layout">
+        <aside class="sidebar">
+            <div>
+                <h2>OTO AI</h2>
+                <div class="menu">
+                    <button onclick="startNewChat()">+ New Chat</button>
+                </div>
+                <div class="history-list">
+                    <h3>Chat History</h3>
+                    <div id="chat-history-list"></div>
                 </div>
             </div>
-
-            <div class="input-area">
-                <textarea id="prompt" placeholder="Type your message..." rows="1"></textarea>
-                <button onclick="sendPrompt()">Send</button>
+            <div class="sidebar-footer">
+                <small>© 2025 OTO AI</small>
             </div>
-        </div>
+        </aside>
 
-        <div class="memory-controls">
-            <div class="memory-toggle">
-                <label class="switch">
-                    <input type="checkbox" id="memoryToggle" checked>
-                    <span class="slider"></span>
-                </label>
-                <span>Memory</span>
+        <main class="chat-section">
+            <header>
+                <h1>OTO AI</h1>
+                <p class="subtitle">Your friendly AI companion</p>
+            </header>
+            <div class="chat-container">
+                <div class="chat-history" id="chatHistory"></div>
+                <div class="input-area">
+                    <textarea id="prompt" placeholder="Type your message..." rows="1"></textarea>
+                    <button onclick="sendPrompt()">Send</button>
+                </div>
             </div>
-            <button class="save-btn" onclick="saveConversation()">Save Conversation</button>
-        </div>
+        </main>
     </div>
 
     <script>
-        // Conversation memory
-        let conversationHistory = [
-            { role: "ai", content: "Hello! I'm OTO AI. How can I help you today?", timestamp: new Date() }
-        ];
+        let currentChatId = null;
+        const chatHistoryEl = document.getElementById("chatHistory");
+        const promptInput = document.getElementById("prompt");
+        const historyListEl = document.getElementById("chat-history-list");
 
-        // Add message to chat history
-        function addMessage(role, content) {
-            const chatHistory = document.getElementById("chatHistory");
+        // Auto-resize textarea
+        promptInput.addEventListener("input", () => {
+            promptInput.style.height = "auto";
+            promptInput.style.height = Math.min(promptInput.scrollHeight, 150) + "px";
+        });
+
+        function addMessageToUI(role, content) {
             const messageDiv = document.createElement("div");
             messageDiv.className = `message ${role}-message`;
+
+            const timeString = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            messageDiv.innerHTML = `<div>${content.replace(/\n/g, '<br>')}</div><div class="timestamp">${timeString}</div>`;
             
-            const timestamp = new Date();
-            const timeString = timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            
-            messageDiv.innerHTML = `
-                <div>${content}</div>
-                <div class="timestamp">${timeString}</div>
-            `;
-            
-            chatHistory.appendChild(messageDiv);
-            chatHistory.scrollTop = chatHistory.scrollHeight;
-            
-            // Add to conversation history if memory is enabled
-            if (document.getElementById("memoryToggle").checked) {
-                conversationHistory.push({ role, content, timestamp });
+            chatHistoryEl.appendChild(messageDiv);
+
+            // Auto scroll ke bawah hanya jika pengguna di bagian bawah
+            const isScrolledToBottom = chatHistoryEl.scrollHeight - chatHistoryEl.clientHeight <= chatHistoryEl.scrollTop + 10;
+            if (isScrolledToBottom) {
+                chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
             }
         }
 
-        // Send prompt to AI
-        async function sendPrompt() {
-            const promptInput = document.getElementById("prompt");
-            const prompt = promptInput.value.trim();
-            
-            if (!prompt) return;
-            
-            // Add user message
-            addMessage("user", prompt);
-            promptInput.value = "";
-            
+        // Simpan ke localStorage
+        function saveConversation(chatId, messages) {
+            if (!chatId) return;
+
             try {
-                // Prepare request data
-                const requestData = {
-                    prompt: prompt,
-                    memory: document.getElementById("memoryToggle").checked ? 
-                           conversationHistory : null
+                const conversations = JSON.parse(localStorage.getItem("conversations")) || {};
+                conversations[chatId] = {
+                    messages: messages,
+                    timestamp: new Date().toISOString()
                 };
-                
-                // Show loading state
-                const loadingMsg = addMessage("ai", "Thinking...");
-                
-                // Send to server
+                localStorage.setItem("conversations", JSON.stringify(conversations));
+                console.log("✅ Saved to localStorage:", chatId);
+            } catch (e) {
+                console.error("❌ Failed to save conversation:", e);
+            }
+        }
+
+        // Muat daftar history
+        function loadChatHistoryList() {
+            try {
+                const conversations = JSON.parse(localStorage.getItem("conversations")) || {};
+                historyListEl.innerHTML = '';
+
+                const sortedIds = Object.keys(conversations).sort((a, b) => 
+                    new Date(conversations[b].timestamp) - new Date(conversations[a].timestamp)
+                );
+
+                sortedIds.forEach(chatId => {
+                    const conversation = conversations[chatId];
+                    const firstUserMessage = conversation.messages.find(m => m.role === 'user');
+                    const title = firstUserMessage 
+                        ? firstUserMessage.content.substring(0, 30) + (firstUserMessage.content.length > 30 ? '...' : '') 
+                        : 'New Chat';
+
+                    const item = document.createElement('div');
+                    item.className = 'history-item';
+                    item.dataset.chatId = chatId; // Aman untuk karakter khusus
+
+                    item.innerHTML = `
+                        <span>${title}</span>
+                        <button class="delete-btn" data-delete-id="${chatId}" title="Delete chat">×</button>
+                    `;
+                    
+                    // Klik item = buka chat
+                    item.onclick = function(e) {
+                        if (e.target.classList.contains('delete-btn')) return;
+                        loadConversation(chatId);
+                    };
+
+                    // Klik tombol delete
+                    item.querySelector('.delete-btn').onclick = function(e) {
+                        e.stopPropagation();
+                        deleteChat(chatId);
+                    };
+
+                    historyListEl.appendChild(item);
+                });
+            } catch (e) {
+                console.error("❌ Failed to load history list:", e);
+                historyListEl.innerHTML = '<div class="error">Failed to load history</div>';
+            }
+        }
+
+        // Hapus chat
+        function deleteChat(chatId) {
+            if (!confirm("Are you sure you want to delete this chat?")) return;
+
+            try {
+                const conversations = JSON.parse(localStorage.getItem("conversations")) || {};
+                delete conversations[chatId];
+                localStorage.setItem("conversations", JSON.stringify(conversations));
+
+                if (currentChatId === chatId) {
+                    // Jika chat yang dihapus sedang aktif
+                    startNewChat();
+                }
+
+                loadChatHistoryList(); // Refresh list
+                console.log("🗑️ Chat deleted:", chatId);
+            } catch (e) {
+                console.error("❌ Delete failed:", e);
+            }
+        }
+
+        // Muat chat
+        function loadConversation(chatId) {
+            try {
+                const conversations = JSON.parse(localStorage.getItem("conversations")) || {};
+                const conversation = conversations[chatId];
+                if (!conversation) {
+                    alert("Chat not found.");
+                    return;
+                }
+
+                currentChatId = chatId;
+                chatHistoryEl.innerHTML = '';
+                conversation.messages.forEach(msg => {
+                    addMessageToUI(msg.role, msg.content);
+                });
+                loadChatHistoryList();
+            } catch (e) {
+                console.error("❌ Load conversation failed:", e);
+            }
+        }
+
+        // Mulai chat baru
+        async function startNewChat() {
+            try {
+                const res = await fetch("/new-chat", { method: "POST" });
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const data = await res.json();
+
+                if (!data.chatId) throw new Error("Invalid response: no chatId");
+
+                currentChatId = data.chatId;
+                chatHistoryEl.innerHTML = '';
+                const welcome = "Hello! I'm OTO AI. How can I help you today? 😊";
+                addMessageToUI("ai", welcome);
+
+                saveConversation(currentChatId, [{ role: 'ai', content: welcome }]);
+                loadChatHistoryList();
+            } catch (error) {
+                console.error("🆕 New chat error:", error);
+                addMessageToUI("ai", "⚠️ Unable to start new chat. Please try again.");
+            }
+        }
+
+        // Kirim pesan
+        async function sendPrompt() {
+            const prompt = promptInput.value.trim();
+            if (!prompt) return;
+            if (!currentChatId) {
+                alert("Starting new chat...");
+                return startNewChat();
+            }
+
+            addMessageToUI("user", prompt);
+
+            // Ambil history lokal
+            const conversations = JSON.parse(localStorage.getItem("conversations")) || {};
+            const currentMessages = conversations[currentChatId]?.messages || [];
+            const updatedMessages = [...currentMessages, { role: 'user', content: prompt }];
+
+            saveConversation(currentChatId, updatedMessages);
+            loadChatHistoryList();
+
+            promptInput.value = '';
+            promptInput.style.height = 'auto';
+
+            // Loading
+            const loading = document.createElement('div');
+            loading.className = 'message ai-message';
+            loading.innerHTML = '<div>🧠 Thinking...</div>';
+            chatHistoryEl.appendChild(loading);
+
+            try {
                 const res = await fetch("/generate-text", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(requestData)
+                    body: JSON.stringify({ prompt, chatId: currentChatId })
                 });
-                
+
+                if (!res.ok) {
+                    const err = await res.json().catch(() => ({ error: "Unknown error" }));
+                    throw new Error(err.error || `HTTP ${res.status}`);
+                }
+
                 const data = await res.json();
-                
-                // Replace loading message with actual response
-                const chatHistory = document.getElementById("chatHistory");
-                chatHistory.removeChild(chatHistory.lastChild);
-                
-                addMessage("ai", data.output || data.error || "Sorry, I couldn't process that.");
+                chatHistoryEl.removeChild(loading);
+                addMessageToUI("ai", data.output);
+
+                const finalMessages = [...updatedMessages, { role: 'ai', content: data.output }];
+                saveConversation(currentChatId, finalMessages);
             } catch (error) {
-                addMessage("ai", "Sorry, there was an error processing your request.");
-                console.error("Error:", error);
+                if (chatHistoryEl.contains(loading)) chatHistoryEl.removeChild(loading);
+                addMessageToUI("ai", `❌ ${error.message}`);
+                console.error("📤 Send error:", error);
             }
         }
 
-        // Save conversation to localStorage
-        function saveConversation() {
-            const savedConversations = JSON.parse(localStorage.getItem("savedConversations")) || [];
-            savedConversations.push({
-                date: new Date(),
-                messages: conversationHistory
-            });
-            
-            localStorage.setItem("savedConversations", JSON.stringify(savedConversations));
-            
-            // Show confirmation (you could replace this with a nicer toast notification)
-            alert("Conversation saved to memory!");
-        }
-
-        // Allow pressing Enter to send (but Shift+Enter for new line)
-        document.getElementById("prompt").addEventListener("keydown", function(e) {
+        // Enter = kirim, Shift+Enter = baris baru
+        promptInput.addEventListener("keydown", (e) => {
             if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
                 sendPrompt();
             }
-            
-            // Auto-resize textarea as user types
-            this.style.height = "auto";
-            this.style.height = (this.scrollHeight) + "px";
         });
+
+        // Inisialisasi
+        window.onload = () => {
+            console.log("🚀 OTO AI App Started");
+            loadChatHistoryList();
+
+            const conversations = JSON.parse(localStorage.getItem("conversations")) || {};
+            const sortedIds = Object.keys(conversations).sort(
+                (a, b) => new Date(conversations[b].timestamp) - new Date(conversations[a].timestamp)
+            );
+            const latestChatId = sortedIds[0];
+
+            if (latestChatId) {
+                loadConversation(latestChatId);
+            } else {
+                startNewChat();
+            }
+        };
     </script>
 </body>
 </html>
